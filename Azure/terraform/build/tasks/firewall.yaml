@@ -1,0 +1,19 @@
+---
+- name: configure firewall
+  firewalld:
+    service: https
+    immediate: true
+    state: enabled
+
+- name: Add ports 8080
+  firewalld:
+    port: 8080/tcp
+    immediate: true
+    state: enabled
+
+- name: Add ports 8081
+  firewalld:
+    port: 8081/tcp
+    immediate: true
+    state: enabled
+

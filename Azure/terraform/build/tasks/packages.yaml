@@ -1,0 +1,8 @@
+---
+- name: install git/jq for demo
+  package:
+    name:
+      - git
+      - jq
+    state: latest
+

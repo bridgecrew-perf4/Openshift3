@@ -1,0 +1,33 @@
+---
+#- name: Install Microsoft key for az-cli
+#  shell:
+#    cmd: rpm --import https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Install Microsoft key for az-cli
+  rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Create azure repo entry
+  copy:
+    src: files/azure-cli.repo
+    dest: /etc/yum.repos.d/azure-cli.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create kubectl repo entry
+  copy:
+    src: files/kubernetes.repo
+    dest: /etc/yum.repos.d/kubernetes-cli.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install az-cli
+  package:
+    name:
+      - azure-cli
+      - kubectl
+    state: latest
+

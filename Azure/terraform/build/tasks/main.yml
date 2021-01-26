@@ -1,0 +1,6 @@
+---
+# tasks file for build
+- include: packages.yaml
+- include: firewall.yaml
+- include: clone.yaml
+- include: azure.yaml
