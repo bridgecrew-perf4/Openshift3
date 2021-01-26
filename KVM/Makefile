@@ -4,8 +4,7 @@ IPworker1:= 192.168.200.80
 IPworker2:= 192.168.200.90
 
 apply:
-	terraform apply -auto-approve
-#	terraform apply -auto-approve -var-file=vars.tfvars
+	terraform apply -auto-approve -var-file=vars.tfvars
 
 init:
 	terraform init
