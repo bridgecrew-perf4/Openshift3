@@ -10,6 +10,9 @@ apply:
 init:
 	terraform init
 
+plan:
+	terraform plan
+
 ## recreate terraform resources
 rebuild: destroy apply
 
