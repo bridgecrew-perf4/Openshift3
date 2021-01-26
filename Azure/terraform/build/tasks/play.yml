@@ -32,7 +32,7 @@
 
     - name: Git pull our code
       shell:
-        cmd: git clone https://gary.crowe%40computacenter.com:QB7Qy93u-TDyyZ5nj4M2@gitlab.gsclabs.cc/gcrowe/podman.git
+        cmd: git clone https:xxxxxxxxxxxxxxxxxxxxxx
       become: false
 
     - name: Install Microsoft key
