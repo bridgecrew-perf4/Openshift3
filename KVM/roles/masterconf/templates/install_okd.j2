@@ -1,0 +1,30 @@
+#! /bin/bash
+# Script to install OKD using supplied ansible playbooks.
+# Run after running preqs.
+
+cd openshift-ansible && git fetch && git checkout release-3.11
+echo -e "Ready to run playbooks.\nRun prerequisites playbook?(y/N) \c"
+read ANS
+if [[ ${ANS^^} == "Y" ]]
+then
+###
+## Run pre-req playbook.
+
+ansible-playbook openshift-ansible/playbooks/prerequisites.yml
+fi
+
+echo -e "Run Deploy Cluster playbook? (y/N) \c"
+read ANS
+
+if [[ ${ANS^^} == "Y" ]]
+then
+## Run the deploy_cluster.yml playbook using your inventory file:
+
+ansible-playbook openshift-ansible/playbooks/deploy_cluster.yml
+fi
+
+## Should be done at this point.
+echo "Please login to your Openshift cluster: oc login https://{{ master }}:8443"
+echo "Login as developer/redhat"
+
+exit 0

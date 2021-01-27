@@ -1,0 +1,23 @@
+# Playbook for Installing docker storage
+# Gary Crowe -  Principal Consultant 27/01/2021
+#
+# version: 1.0 - GC. First stab
+#
+
+- name: "Configure Docker storage onto /dev/vdb"
+  template:
+    src: templates/docker.j2
+    dest: /etc/sysconfig/docker-storage-setup
+
+- name: "Docker storage setup"
+  shell: docker-storage-setup
+
+- name: Enable docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Reboot machine
+  reboot:
+    reboot_timeout: 600

@@ -1,0 +1,60 @@
+# Playbook for setting up Openshift Servers
+# Gary Crowe -  Principal Consultant 18-Oct-2018
+#
+# version: 1.0 - GC. Re-created as role.
+#
+# This playbook registers your Openshift servers to RHEL.  This playbook
+# SHOULD NOT be run against machines that are provisioned to Satellite
+# 
+- name: "Configure Openshift Licences | Subscription Manager register"
+  redhat_subscription:
+    state: present
+    username: "{{ rhel_user_name }}"
+    password: "{{ rhel_password }}"
+    pool_ids: "{{ rhel_pool_id }}"
+  when: ansible_distribution == 'RedHat'
+  tags:
+    - "rhn"
+
+- name: "Configure Bastion | Disable all RHSM repositories"
+  rhsm_repository:
+    name: '*'
+    state: disabled
+  when: ansible_distribution == 'RedHat'
+  tags:
+    - "rhn"
+
+- name: Enable 7-Server repository
+  rhsm_repository:
+    name: rhel-7-server-rpms
+  when: ansible_distribution == 'RedHat'
+  tags:
+    - "rhn"
+
+- name: Enable 7-Server extras repository
+  rhsm_repository:
+    name: rhel-7-server-extras-rpms
+  when: ansible_distribution == 'RedHat'
+  tags:
+    - "rhn"
+
+- name: Enable 7-Server OSE3.X repository
+  rhsm_repository:
+    name: rhel-7-server-ose-{{ oshift_ver }}-rpms
+  when: ansible_distribution == 'RedHat'
+  tags:
+    - "rhn"
+
+- name: Enable 7-Server ansible repository
+  rhsm_repository:
+    name: rhel-7-server-ansible-2.4-rpms
+  when: ( ansible_distribution == 'RedHat' ) and ( oshift_ver|string == '3.10' )
+  tags:
+    - "rhn"
+
+- name: Enable 7-Server ansible repository
+  rhsm_repository:
+    name: rhel-7-server-ansible-2.6-rpms
+  when: ( ansible_distribution == 'RedHat' ) and ( oshift_ver|string == '3.11' )
+  tags:
+    - "rhn"

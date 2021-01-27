@@ -1,0 +1,51 @@
+# Configures master node 
+# Gary Crowe, Principal consultant.  Computacenter
+
+#- name: "Configure Master | Checking for root ssh public key"
+#  stat: path=/root/.ssh/id_rsa.pub
+#  register: a2
+
+#- name: "Configure Master | generate key pair"
+#  shell: ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ''
+#  when: a2.stat.exists is not defined or not a2.stat.exists
+
+- name: Copy over private key so master can ssh to workers
+  copy:
+    src: /home/pi/.ssh/id_rsa
+    dest: /home/pi/.ssh/id_rsa
+    owner: pi
+    group: pi
+    mode: '0600'
+
+- name: "Configure Master | Install htpasswd"
+  yum: state=installed name=httpd-tools
+
+- name: "Configure Oshift hosts file | Origin ansible template creation"
+  template:
+    src: templates/origin_okd.j2
+    dest: /etc/ansible/hosts
+  tags:
+    - "origin"
+
+- name: "Configure Master | Install script for Centos"
+  template:
+    src: templates/install_okd.j2
+    dest: install_ocp.bash
+    owner: root
+    mode: 0500
+  tags:
+    - "origin"
+
+- name: "Configure Master | Pull ansible-openshift 3.11 repo"
+  command: /usr/bin/git clone https://github.com/openshift/openshift-ansible.git creates=openshift-ansible
+  when: ansible_distribution == 'CentOS'
+
+- name: Update hosts file for worker1
+  lineinfile:
+    path: /etc/hosts
+    line: '{{ worker1ip }} {{ worker1 }}'
+
+- name: Update hosts file for worker2
+  lineinfile:
+    path: /etc/hosts
+    line: '{{ worker2ip }} {{ worker2 }}'

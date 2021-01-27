@@ -10,16 +10,25 @@ PURPLE='\033[0;35m'    ; LIGHTPURPLE='\033[1;35m'
 CYAN='\033[0;36m'      ; LIGHTCYAN='\033[1;36m'
 LIGHTGRAY='\033[0;37m' ; WHITE='\033[1;37m'
 NC='\033[0m' # No Color
-
-source KVM.tfvars
-
+PS4='[${LINENO}]'
+SUBDOMAIN=app
 clear
-printf "[master]\n${prefixIP}.${octetIP}\n" > inv
-printf "${CYAN}oshiftmaster VM appears to be at public address:${WHITE}${prefixIP}.${octetIP}${NC}\n"
-printf "\n${CYAN}Lets ping the host to see if it's available: \n${WHITE}ansible -vi inv ${hostname} -m ping${NC}\n"
-ansible -i inv ${prefixIP}.${octetIP} -m ping -u pi
+[[ ! -e vars.tfvars ]] && FILE=staticip.tf || FILE=vars.tfvars
+OCT=($(grep -i octetIP ${FILE} | sed 's!^\(.*\)\[\(.*\)\]\(.*\)$!\2!' | tr -d ',' | head -n 1))
+eval $(grep -i prefixIP ${FILE} | tr -d '"')
+NODES=($(grep host_names ${FILE} | sed 's!^\(.*\)\[\(.*\)\]\(.*\)$!\2!' | tr -d ',"'))
+eval $(grep -i domain ${FILE} | tr -d '"')
+
+printf "[OSEv3:children]\nmaster\nworkers\n\n[OSEv3:vars]\nmaster=${NODES[0]}.${domain}\nmasterip=${prefixIP}.${OCT[0]}\nworker1=${NODES[1]}.${domain}\nworker1ip=${prefixIP}.${OCT[1]}\nworker2=${NODES[2]}.${domain}\nworker2ip=${prefixIP}.${OCT[2]}\nsub=${SUBDOMAIN}\ndomain=${domain}\n\n[master]\n${prefixIP}.${OCT[0]}\n[workers]\n${prefixIP}.${OCT[1]}\n${prefixIP}.${OCT[2]}\n" > inv
+
+printf "Expunging ssh keys if present"
+make ssh
+
+printf "\n${CYAN}Lets ping the nodes to check they are available: \n${WHITE}ansible -vi inv ${hostname} -m ping${NC}\n"
+ansible -i inv all -m ping
+
 printf "${CYAN}\nRun our play: ${WHITE}ansible-playbook -vi inv site.yml${NC}\n"
 printf "${GREEN}>>>"
 read
 ansible-playbook -v -i inv site.yml
-printf "${ORANGE}Your cluster should be available @ http://${prefixIP}.${octetIP}:8443${NC}\n\n"
+printf "${ORANGE}Login to the master (${NODES[0]}) and run the install script.\n\n"

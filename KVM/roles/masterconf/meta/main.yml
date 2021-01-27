@@ -1,0 +1,8 @@
+galaxy_info:
+  author: Gary Crowe
+  description: Installs Master openshift ansible file & install script
+  company: Computacenter
+
+  license: BSD
+  min_ansible_version: 2.4
+

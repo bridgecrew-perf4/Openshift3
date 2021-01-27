@@ -1,0 +1,48 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+ansible_ssh_user=root
+ansible_become=true
+
+openshift_deployment_type=origin
+#openshift_release={{ 3.11 }}
+
+os_firewall_use_firewalld=True
+openshift_disable_check=disk_availability,memory_availability,docker_storage
+
+#deployment_subtype=registry 
+#openshift_hosted_infra_selector=""
+#containerized=true
+
+#openshift_web_console_nodeselector={'region':'infra'}
+
+# use HTPasswd for authentication
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+openshift_master_htpasswd_file=/etc/origin/master/htpasswd
+
+# Add developer user (password: redhat)
+openshift_master_htpasswd_users={'developer': '$apr1$CDqbhgRo$VubxDHUTTto4VY08xDnbc.'}
+
+# define default sub-domain for Master node
+openshift_master_default_subdomain={{ sub }}.{{ domain }}
+
+# Install hawkular metrics
+#openshift_metrics_install_metrics=true
+
+# allow unencrypted connection within cluster
+openshift_docker_insecure_registries=172.30.0.0/16
+openshift_install_examples=true
+
+[masters]
+{{ master }} openshift_schedulable=true
+
+[etcd]
+{{ master }}
+
+[nodes]
+{{ master }} openshift_node_group_name='node-config-master-infra'
+{{ worker1 }} openshift_node_group_name='node-config-compute'
+{{ worker }} openshift_node_group_name='node-config-compute'

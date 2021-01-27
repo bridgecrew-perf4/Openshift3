@@ -1,0 +1,44 @@
+# Playbook for Installing OKD required software
+# Gary Crowe -  Principal Consultant 27/01/2021
+#
+# version: 1.0 - GC. First stab
+#
+- name: "Configure OKD hosts | Include req_packages.yml"
+  include_vars: "vars/req_packages.yml"
+  tags:
+    - "req_packages"
+
+- name: Install required packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - "{{ req_packages }} "
+
+- name: Disable epel repo
+  lineinfile:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^enabled=1'
+    line: 'enabled=0'
+
+- name: Install the latest version of pyOpenSSL
+  yum:
+    name: "{{ item }}"
+    enablerepo: epel
+    state: present
+  with_items:
+    - pyOpenSSL
+    - centos-release-ansible-27.noarch
+
+- name: "Configure Openshift hosts | Yum update"
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install docker and ansible after yum update
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - docker-1.13.1
+    - ansible

@@ -3,7 +3,7 @@ variable "host_names"  { default = ["neo", "trinity", "morpheus"] }
 variable "domain"      { default = "OCP3.local" }
 variable "ip_type"     { default = "static" } # dhcp is other valid type
 variable "prefixIP"    { default = "192.168.200" }
-variable "octetIP"     { default = ["70", "80", "90"] }
+variable "octetIP"     { default = [70, 80, 90] }
 variable "DockerBytes" { default = 1024*1024*1024*30 }
 variable "NetworkID"   { default = "General" }
 
@@ -29,7 +29,8 @@ resource "libvirt_volume" "os_image" {
   count = length(var.host_names)
   name  = "${var.host_names[count.index]}-os_image"
   pool  = "default"
-  source = "/var/lib/libvirt/images/rhel-server-7.8-big-x86_64-kvm.qcow2"
+#  source = "/var/lib/libvirt/images/rhel-server-7.8-big-x86_64-kvm.qcow2"
+  source = "/var/lib/libvirt/images/CentOS-7-x86_64-GenericCloud.qcow2"
   format = "qcow2"
 }
 
@@ -104,6 +105,10 @@ resource "libvirt_domain" "domain-RHEL" {
     listen_type = "address"
     autoport = "true"
   }
+}
+
+output "hostnames" {
+  value = var.host_names[*]
 }
 
 terraform { 

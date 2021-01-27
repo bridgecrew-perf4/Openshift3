@@ -1,0 +1,16 @@
+---
+- name: Setup Openshift hosts pre--pre reqs. # Pre-reqs
+  hosts: all
+  remote_user: pi
+  become: True
+
+  roles:
+     - ppreqs
+
+- name: Setup Openshift Master
+  hosts: master 
+  remote_user: pi
+  become: True
+
+  roles:
+     - masterconf

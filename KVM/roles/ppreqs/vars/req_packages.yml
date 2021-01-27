@@ -1,0 +1,19 @@
+req_packages:
+  - wget
+  - centos-release-openshift-origin311.noarch 
+  - wget
+  - git 
+  - net-tools
+  - bind-utils 
+  - yum-utils 
+  - iptables-services 
+  - bridge-utils 
+  - bash-completion
+  - kexec-tools 
+  - sos 
+  - psacct 
+  - vim 
+  - git 
+  - mlocate
+  - NetworkManager
+  - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
