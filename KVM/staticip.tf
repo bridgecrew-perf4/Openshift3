@@ -2,14 +2,13 @@
 variable "host_names"  { default = ["neo", "trinity", "morpheus"] }
 variable "domain"      { default = "OCP3.local" }
 variable "ip_type"     { default = "static" } # dhcp is other valid type
-variable "memoryMB"    { default = 1024*16 }
-variable "cpu"         { default = 2 }
 variable "prefixIP"    { default = "192.168.200" }
 variable "octetIP"     { default = ["70", "80", "90"] }
 variable "DockerBytes" { default = 1024*1024*1024*30 }
+variable "NetworkID"   { default = "General" }
 
-#variable "cpu"        { default = [4,2,2] }
-#variable "memoryMB"    { default = [1024*16, 1024*8, 1024*8] }
+variable "cpu"        { default = [4,2,2] }
+variable "memoryMB"   { default = [1024*16, 1024*8, 1024*8] }
 
 terraform {
   required_providers {
@@ -79,17 +78,14 @@ resource "libvirt_domain" "domain-RHEL" {
   # domain name in libvirt, not hostname
   count = length(var.host_names)
   name = "${var.host_names[count.index]}-${var.domain}"
-  memory = var.memoryMB
-  vcpu = var.cpu
-
-#  memory = var.memoryMB[count,index]
-#  vcpu = var.cpu[count,index]
+  memory = var.memoryMB[count.index]
+  vcpu = var.cpu[count.index]
 
   disk { volume_id = libvirt_volume.os_image[count.index].id   }
   disk { volume_id = libvirt_volume.disk_data1[count.index].id }
 
   network_interface {
-       network_name = "General"
+       network_name = var.NetworkID
   }
 
   cloudinit = libvirt_cloudinit_disk.commoninit[count.index].id
