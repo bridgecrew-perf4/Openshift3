@@ -12,9 +12,9 @@
 - name: Copy over private key so master can ssh to workers
   copy:
     src: /home/pi/.ssh/id_rsa
-    dest: /home/pi/.ssh/id_rsa
-    owner: pi
-    group: pi
+    dest: /root/.ssh/id_rsa
+    owner: root
+    group: root
     mode: '0600'
 
 - name: "Configure Master | Install htpasswd"
@@ -30,15 +30,33 @@
 - name: "Configure Master | Install script for Centos"
   template:
     src: templates/install_okd.j2
-    dest: install_ocp.bash
+    dest: /root/install_ocp.bash
     owner: root
     mode: 0500
   tags:
     - "origin"
 
 - name: "Configure Master | Pull ansible-openshift 3.11 repo"
-  command: /usr/bin/git clone https://github.com/openshift/openshift-ansible.git creates=openshift-ansible
-  when: ansible_distribution == 'CentOS'
+  command: /usr/bin/git clone https://github.com/openshift/openshift-ansible.git
+  become: yes
+  become_user: root
+  args:
+    chdir: /root
+    creates: /root/openshift-ansible
+
+# Add hostname in master file and remove 127.0.0.1 entry: https://bugzilla.redhat.com/show_bug.cgi?id=1655214
+# 127.0.0.1 slave1.okd.local slave1
+#
+- name: Remove loopback entry
+  lineinfile:
+    path: /etc/hosts
+    state: absent
+    regexp: '^127\.0\.0\.1 {{master}} {{masterip}} {{ master | regex_replace('^(.*)\.*$', '\\1') }}'
+
+- name: Update hosts file for master
+  lineinfile:
+    path: /etc/hosts
+    line: '{{ masterip }} {{ master }}'
 
 - name: Update hosts file for worker1
   lineinfile:

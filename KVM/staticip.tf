@@ -29,7 +29,7 @@ resource "libvirt_volume" "os_image" {
   count = length(var.host_names)
   name  = "${var.host_names[count.index]}-os_image"
   pool  = "default"
-#  source = "/var/lib/libvirt/images/rhel-server-7.8-big-x86_64-kvm.qcow2"
+# source = "/var/lib/libvirt/images/rhel-server-7.8-big-x86_64-kvm.qcow2"
   source = "/var/lib/libvirt/images/CentOS-7-x86_64-GenericCloud.qcow2"
   format = "qcow2"
 }
@@ -91,9 +91,8 @@ resource "libvirt_domain" "domain-RHEL" {
 
   cloudinit = libvirt_cloudinit_disk.commoninit[count.index].id
 
-  # IMPORTANT
-  # RHEL can hang is a isa-serial is not present at boot time.
-  # If you find your CPU 100% and never is available this is why
+# IMPORTANT
+# RHEL can hang is a isa-serial is not present at boot time.
   console {
     type        = "pty"
     target_port = "0"

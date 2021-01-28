@@ -4,7 +4,7 @@ nodes
 etcd
 
 [OSEv3:vars]
-ansible_ssh_user=root
+ansible_ssh_user={{ id }}
 ansible_become=true
 
 openshift_deployment_type=origin
@@ -45,4 +45,4 @@ openshift_install_examples=true
 [nodes]
 {{ master }} openshift_node_group_name='node-config-master-infra'
 {{ worker1 }} openshift_node_group_name='node-config-compute'
-{{ worker }} openshift_node_group_name='node-config-compute'
+{{ worker2 }} openshift_node_group_name='node-config-compute'
