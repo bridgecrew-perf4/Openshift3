@@ -1,6 +1,6 @@
 # Openshift3
 Terraform and ansible code to spin up OKD/Openshift 3.11 under KVM/Azure
-This code was developed so that I could spin up Openshift resources quickly.
+This code was developed so that I could spin up OKD/Openshift resources quickly.
 Useful for customer demonstrations and training courses.
 
 ## Usage.
@@ -11,15 +11,14 @@ Useful for customer demonstrations and training courses.
 ```
 make init
 make
+bash ./configure.bash
 ```
-4. bash ./configure.bash
-5. Your OKD cluster should provision and be available after around 30 minutes.
-
-### Note for Ron
-At the moment, the code in KVM provisions the three machines correctly. I got tired and gave up.
-Outstanding:
-1.  Code to process the CPU & Memory from an array (tuple) as I want to be able to set those seperately per machine.
-2. Write the ansible code! (I have most of that)
+5. Login to your master node and run the generated script:
+```
+./install_ocp.bash
+``` 
+### Notes
+For each cloud instance, see the README.md in the relevant directory for specific instructions.
 
 Gary.
 26/01/2021

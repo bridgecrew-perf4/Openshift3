@@ -43,27 +43,3 @@
   args:
     chdir: /root
     creates: /root/openshift-ansible
-
-# Add hostname in master file and remove 127.0.0.1 entry: https://bugzilla.redhat.com/show_bug.cgi?id=1655214
-# 127.0.0.1 slave1.okd.local slave1
-#
-- name: Remove loopback entry
-  lineinfile:
-    path: /etc/hosts
-    state: absent
-    regexp: '^127\.0\.0\.1 {{master}} {{masterip}} {{ master | regex_replace('^(.*)\.*$', '\\1') }}'
-
-- name: Update hosts file for master
-  lineinfile:
-    path: /etc/hosts
-    line: '{{ masterip }} {{ master }}'
-
-- name: Update hosts file for worker1
-  lineinfile:
-    path: /etc/hosts
-    line: '{{ worker1ip }} {{ worker1 }}'
-
-- name: Update hosts file for worker2
-  lineinfile:
-    path: /etc/hosts
-    line: '{{ worker2ip }} {{ worker2 }}'
