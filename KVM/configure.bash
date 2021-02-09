@@ -11,7 +11,7 @@ CYAN='\033[0;36m'      ; LIGHTCYAN='\033[1;36m'
 LIGHTGRAY='\033[0;37m' ; WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 PS4='[${LINENO}]'
-SUBDOMAIN=app
+SUBDOMAIN=apps
 IDENT=$(id -nu)
 clear
 [[ ! -e vars.tfvars ]] && FILE=staticip.tf || FILE=vars.tfvars
